@@ -22,15 +22,14 @@
                     this.width = w;
                     this.height = h;
 
-                    this.randomX = Math.floor(Math.random() * (this.width - 2)) + 1;
-                    this.randomY = Math.floor(Math.random() * (this.height - 2)) + 1;
-
                     this.labMassive = [];
                     this.stack = [];
                     this.shortPath = [];
 
                     this.enterY = 0;
                     this.exitY = 0;
+
+                    this.number = 0;
 
                     for (var i = 0; i < this.height*this.width; i++) {
                         this.labMassive.push(0);
@@ -48,19 +47,19 @@
                 }
                 makeEdge() {
                     for (var i = 0; i < this.width; i++) {
-                        lab.set(i, 0, 1);
+                        this.set(i, 0, 1);
                     }
 
                     for (var i = 0; i < this.height; i++) {
-                        lab.set(0, i, 1);
+                        this.set(0, i, 1);
                     }
 
                     for (var i = 0; i < this.width; i++) {
-                        lab.set(i, this.width-1, 1);
+                        this.set(i, this.width-1, 1);
                     }
 
                     for (var i = 0; i <this.height; i++) {
-                        lab.set(this.height-1, i, 1);
+                        this.set(this.height-1, i, 1);
                     }
                 }
                 makeRandomSquares() {
@@ -68,15 +67,15 @@
                         var randomX = Math.floor(Math.random() * (this.width - 4)) + 2;
                         var randomY = Math.floor(Math.random() * (this.height - 4)) + 2;
 
-                        lab.set(randomX, randomY, 1);
+                        this.set(randomX, randomY, 1);
                     }
                 }
                 makeEnterAndExit() {
                     this.enterY = Math.floor(Math.random() * (this.height - 2)) + 1;
                     this.exitY = Math.floor(Math.random() * (this.height - 2)) + 1;
 
-                    lab.set(0, this.enterY, 0);
-                    lab.set(this.width-1, this.exitY, 0);
+                    this.set(0, this.enterY, 0);
+                    this.set(this.width-1, this.exitY, 0);
                 }
                 generateObstacle() {
                     for (var i = 0; i < 10000; i++) {
@@ -84,36 +83,36 @@
                         this.randomX = Math.floor(Math.random() * (this.width - 2)) + 1;
                         this.randomY = Math.floor(Math.random() * (this.height - 2)) + 1;
 
-                        if (lab.get(this.randomX-1, this.randomY) !== 0) {
+                        if (this.get(this.randomX-1, this.randomY) !== 0) {
                             n++;
-                            if (lab.get(this.randomX+1, this.randomY-1) !== 0 || lab.get(this.randomX+1, this.randomY+1) !== 0) {
+                            if (this.get(this.randomX+1, this.randomY-1) !== 0 || this.get(this.randomX+1, this.randomY+1) !== 0) {
                                 n++;
                             }
                         }
 
-                        if (lab.get(this.randomX+1, this.randomY) !== 0) {
+                        if (this.get(this.randomX+1, this.randomY) !== 0) {
                             n++;
-                            if (lab.get(this.randomX-1, this.randomY+1) !== 0 || lab.get(this.randomX-1, this.randomY-1) !== 0) {
+                            if (this.get(this.randomX-1, this.randomY+1) !== 0 || this.get(this.randomX-1, this.randomY-1) !== 0) {
                                 n++;
                             }
                         }
 
-                        if (lab.get(this.randomX, this.randomY+1) !== 0) {
+                        if (this.get(this.randomX, this.randomY+1) !== 0) {
                             n++;
-                            if (lab.get(this.randomX-1, this.randomY-1) !== 0 || lab.get(this.randomX+1, this.randomY-1) !== 0) {
+                            if (this.get(this.randomX-1, this.randomY-1) !== 0 || this.get(this.randomX+1, this.randomY-1) !== 0) {
                                 n++;
                             }
                         }
 
-                        if (lab.get(this.randomX, this.randomY-1) !== 0) {
+                        if (this.get(this.randomX, this.randomY-1) !== 0) {
                             n++;
-                            if (lab.get(this.randomX-1, this.randomY+1) !== 0 || lab.get(this.randomX+1, this.randomY+1) !== 0) {
+                            if (this.get(this.randomX-1, this.randomY+1) !== 0 || this.get(this.randomX+1, this.randomY+1) !== 0) {
                                 n++;
                             }
                         }
 
                         if (n === 1) {
-                            lab.set(this.randomX, this.randomY, 1);
+                            this.set(this.randomX, this.randomY, 1);
                         }
                     }
                 }
@@ -121,52 +120,50 @@
                     for (var i = 0; i < this.stack.length; i++) {
                         var xy = this.stack[i];
 
-                        if (lab.get(xy[0]-1, xy[1]) >= 1000) {
+                        if (this.get(xy[0]-1, xy[1]) >= 1000) {
                             this.set(xy[0]-1, xy[1], 0);
                         }
 
-                        if (lab.get(xy[0]+1, xy[1]) >= 1000) {
+                        if (this.get(xy[0]+1, xy[1]) >= 1000) {
                             this.set(xy[0]+1, xy[1], 0);
                         }
 
-                        if (lab.get(xy[0], xy[1]+1) >= 1000) {
+                        if (this.get(xy[0], xy[1]+1) >= 1000) {
                             this.set(xy[0], xy[1]+1, 0);
                         }
 
-                        if (lab.get(xy[0], xy[1]-1) >= 1000) {
+                        if (this.get(xy[0], xy[1]-1) >= 1000) {
                             this.set(xy[0], xy[1]-1, 0);
                         }
                     }
 
-                    this.stack = [];
-
                     var xy = [0, this.enterY];
-
-                    this.stack.push(xy);
-
                     var k = 1000;
 
-                    lab.set(xy[0], xy[1], k++);
+                    this.stack = [];
+                    this.stack.push(xy);
+
+                    this.set(xy[0], xy[1], k++);
 
                     for (var i = 0; i < this.stack.length; i++) {
                         var xy = this.stack[i];
 
-                        if (lab.get(xy[0]-1, xy[1]) === 0) {
+                        if (this.get(xy[0]-1, xy[1]) === 0) {
                             this.stack.push([xy[0]-1, xy[1]]);
                             this.set(xy[0]-1, xy[1], k++);
                         }
 
-                        if (lab.get(xy[0]+1, xy[1]) === 0) {
+                        if (this.get(xy[0]+1, xy[1]) === 0) {
                             this.stack.push([xy[0]+1, xy[1]]);
                             this.set(xy[0]+1, xy[1], k++);
                         }
 
-                        if (lab.get(xy[0], xy[1]+1) === 0) {
+                        if (this.get(xy[0], xy[1]+1) === 0) {
                             this.stack.push([xy[0], xy[1]+1]);
                             this.set(xy[0], xy[1]+1, k++);
                         }
 
-                        if (lab.get(xy[0], xy[1]-1) === 0) {
+                        if (this.get(xy[0], xy[1]-1) === 0) {
                             this.stack.push([xy[0], xy[1]-1]);
                             this.set(xy[0], xy[1]-1, k++);
                         }
@@ -177,12 +174,8 @@
                     return false;   
                 }
                 findShortestPath() {
-                    //console.log(this.exitY, this.enterY);
-                    //console.log(lab.get(this.width-1, this.exitY));
-                    //console.log(this.stack.length);
-
                     var xy = [this.width-1, this.exitY];
-                    var number = lab.get(this.width-1, this.exitY);
+                    var number = this.get(this.width-1, this.exitY);
 
                     this.shortPath = [];
                     this.shortPath.push(xy);
@@ -193,10 +186,10 @@
                         var x = xy[0];
                         var y = xy[1];
 
-                        var left = lab.get(x-1, y);
-                        var right = lab.get(x+1, y);
-                        var down = lab.get(x, y+1);
-                        var up = lab.get(x, y-1);
+                        var left = this.get(x-1, y);
+                        var right = this.get(x+1, y);
+                        var down = this.get(x, y+1);
+                        var up = this.get(x, y-1);
 
                         if (left >= 1000) {
                             if (number > left) {
@@ -227,6 +220,7 @@
                         }
 
                         this.shortPath.push(xy);
+                        if (xy[0] === 0 && xy[1] === this.enterY) break;
                     }
                 }
                 drawShortPath(cell) {
@@ -239,7 +233,7 @@
                 draw(cell) {
                     for (var i = 0; i < this.height; i++) {
                         for (var j = 0; j < this.width; j++) {
-                            var c = lab.get(j, i);
+                            var c = this.get(j, i);
 
                             if (c >= 1000) {
                                 ctx.fillStyle = "Black";
@@ -257,45 +251,53 @@
                 }
                 makeLonger() {
                     for (var d = 0; d < 20; d++) {
-                        lab.scanLabyrinth();
-                        lab.findShortestPath();
+                        this.scanLabyrinth();
+                        this.findShortestPath();
 
                         for (var i = 1; i < this.shortPath.length-1; i++) {
                             var x = this.shortPath[i][0];
                             var y = this.shortPath[i][1];
 
-                            var up = lab.get(x, y-1);
-                            var down = lab.get(x, y+1);
+                            var up = this.get(x, y-1);
+                            var down = this.get(x, y+1);
 
                             if (up < 1000 && up >= 1 && down < 1000 && down >= 1) {
-                                lab.set(x, y, 2);
-                                if (!lab.scanLabyrinth()) {
-                                    lab.set(x, y, 0);
+                                this.set(x, y, 2);
+                                if (!this.scanLabyrinth()) {
+                                    this.set(x, y, 0);
                                 } else {
-                                    lab.scanLabyrinth();
-                                    lab.findShortestPath(); 
+                                    this.scanLabyrinth();
+                                    this.findShortestPath(); 
                                     break;
                                 }
                             }
                         }
                     }
                 }
-                generateLabyrinth() {
-                    lab.makeEdge();
-                    lab.makeRandomSquares();
-                    lab.makeEnterAndExit();
-                    lab.generateObstacle();
-                    lab.makeLonger();
-                    lab.draw(20);
-                    $('.myButton').click(function () {
-                        lab.drawShortPath(20);
-                    })
-                    //lab.drawShortPath(20);
+                complexLabyrinth() {
+                    var best = new labyrinth(canvas.width/20, canvas.height/20);
+                    for (var i = 0; i < 20; i++) {
+                        var lab = new labyrinth(canvas.width/20, canvas.height/20);
+
+                        lab.makeEdge();
+                        lab.makeRandomSquares();
+                        lab.makeEnterAndExit();
+                        lab.generateObstacle();
+                        lab.makeLonger();
+
+                        if (best.shortPath.length < lab.shortPath.length) {
+                            best = lab;
+                        }
+                    }                    
+                    return best;
                 }
             }
-            const lab = new labyrinth(canvas.width/20, canvas.height/20);
-
-            lab.generateLabyrinth();
+            var lab = new labyrinth(canvas.width/20, canvas.height/20);
+            lab = lab.complexLabyrinth();
+            lab.draw(20);
+            $('.myButton').click(function () {
+                lab.drawShortPath(20);
+            });  
         </script>
 
         <style>
