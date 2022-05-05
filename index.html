@@ -8,6 +8,8 @@
         <canvas id="canvas" width="640" height="640"></canvas>
         <script src='https://code.jquery.com/jquery-2.1.0.js'></script>
 
+        <a class="myButton">Show Shortest Way</a>
+
         <script>
             var canvas = document.getElementById("canvas");
             var ctx = canvas.getContext("2d");
@@ -254,7 +256,7 @@
                     }
                 }
                 makeLonger() {
-                    for (var d = 0; d < 100; d++) {
+                    for (var d = 0; d < 20; d++) {
                         lab.scanLabyrinth();
                         lab.findShortestPath();
 
@@ -285,10 +287,12 @@
                     lab.generateObstacle();
                     lab.makeLonger();
                     lab.draw(20);
+                    $('.myButton').click(function () {
+                        lab.drawShortPath(20);
+                    })
                     //lab.drawShortPath(20);
                 }
             }
-
             const lab = new labyrinth(canvas.width/20, canvas.height/20);
 
             lab.generateLabyrinth();
@@ -302,6 +306,29 @@
                 left: 50%;
                 margin-right: -50%;
                 transform: translate(-50%, -50%);
+            }
+            body{
+                background-color:#000000;
+                text-align: center;
+            }
+            .myButton {
+                box-shadow:inset 0px 0px 0px 0px Gray;
+                background:linear-gradient(to bottom, Gray 5%, Gray 100%);
+                background-color:Gray;
+                border-radius:3px;
+                border:1px solid Gray;
+                display:inline-block;
+                cursor:pointer;
+                color:#ffffff;
+                font-family:Arial;
+                font-size:30px;
+                padding:25px 30px;
+                text-decoration:none;
+                text-shadow:0px 0px 0px Gray;
+            }
+            .myButton:active {
+                position:relative;
+                top:1px;
             }
         </style>
     </body>
