@@ -4,32 +4,93 @@
         <title>Labyrinth</title>
     </head>
 
+    <style>
+        .whole {
+            max-width: 1000pt;
+            height: 100%;		
+            margin: auto;
+            background-color: black;
+        }
+        html, body {
+            background-color: black;
+            height: 100%;		
+            margin: 0;
+        }
+        #box{
+            position:relative;
+        }
+        #canvas{
+            position:absolute;
+            top:0;bottom:0;right:0;left:0;
+            margin:auto;
+        }
+        .myButton {
+            box-shadow:inset 0px 0px 0px 0px Gray;
+            background:linear-gradient(to bottom, Gray 5%, Gray 100%);
+            background-color:Gray;
+            border-radius:3px;
+            border:1px solid Gray;
+            display:inline-block;
+            cursor:pointer;
+            color:#ffffff;
+            font-family:Arial;
+            font-size:30px;
+            padding:25px 30px;
+            text-decoration:none;
+            text-shadow:0px 0px 0px Gray;
+            margin: 5pt;
+        }
+        .myButton:active {
+            position:relative;
+            top:1px;
+        }
+    </style>
+
     <body>
-        <canvas id="canvas" width="640" height="640"></canvas>
         <script src='https://code.jquery.com/jquery-2.1.0.js'></script>
 
-        <a class="myButton">Show Shortest Way</a>
+        <div class="whole" style="display: grid; grid-template-rows: 80pt auto;">
+            <div style="display: grid; grid-template-columns: 1fr auto auto 1fr;">
+                <div></div>
+                <a class="myButton" id="show">Show Shortest Way</a>
+                <a class="myButton" id="refresh">Refresh ↺</a>
+                <div></div>
+            </div>
+            <div id="box"><canvas id="canvas"></canvas></div>
+        </div>
 
         <script>
             var canvas = document.getElementById("canvas");
             var ctx = canvas.getContext("2d");
+            var box = document.querySelector('#box');
+            
+            var width = box.clientWidth;
+            var height = box.clientHeight;
 
-            var x = 0;
-            var y = 0;
+            if (width > height) {
+                var labSize = 32;
+                var cell = Math.floor(height/labSize);
+
+                canvas.width = cell*labSize;
+                canvas.height = cell*labSize;
+            } else if (width < height) {
+                var labSize = 32;
+                var cell = Math.floor(width/labSize);
+
+                canvas.width = cell*labSize;
+                canvas.height = cell*labSize;
+            }
 
             class labyrinth {
                 constructor(w, h) {
+                    this.cell = Math.floor(canvas.width/32);
+
                     this.width = w;
                     this.height = h;
 
                     this.labMassive = [];
                     this.stack = [];
                     this.shortPath = [];
-
-                    this.enterY = 0;
-                    this.exitY = 0;
-
-                    this.number = 0;
 
                     for (var i = 0; i < this.height*this.width; i++) {
                         this.labMassive.push(0);
@@ -223,14 +284,15 @@
                         if (xy[0] === 0 && xy[1] === this.enterY) break;
                     }
                 }
-                drawShortPath(cell) {
+                drawShortPath() {
                     for (var i = 0; i < this.shortPath.length; i++) {
                         ctx.fillStyle = "Green";
 
-                        ctx.fillRect(this.shortPath[i][0]*cell, this.shortPath[i][1]*cell, cell, cell);
+                        ctx.fillRect(this.shortPath[i][0]*this.cell, this.shortPath[i][1]*this.cell, this.cell, this.cell);
                     }
                 }
-                draw(cell) {
+                draw() {
+                    ctx.clearRect(0, 0, this.width*this.cell, this.height*this.cell);
                     for (var i = 0; i < this.height; i++) {
                         for (var j = 0; j < this.width; j++) {
                             var c = this.get(j, i);
@@ -242,10 +304,10 @@
                             } else if (c === 0) {
                                 ctx.fillStyle = "Black";
                             } else {
-                                ctx.fillStyle = "Gray"; 
+                                ctx.fillStyle = "Gray";
                             }
 
-                            ctx.fillRect(j*cell, i*cell, cell, cell);
+                            ctx.fillRect(j*this.cell, i*this.cell, this.cell, this.cell);
                         }
                     }
                 }
@@ -275,9 +337,9 @@
                     }
                 }
                 complexLabyrinth() {
-                    var best = new labyrinth(canvas.width/20, canvas.height/20);
+                    var best = new labyrinth(labSize, labSize);
                     for (var i = 0; i < 20; i++) {
-                        var lab = new labyrinth(canvas.width/20, canvas.height/20);
+                        var lab = new labyrinth(labSize, labSize);
 
                         lab.makeEdge();
                         lab.makeRandomSquares();
@@ -292,46 +354,19 @@
                     return best;
                 }
             }
-            var lab = new labyrinth(canvas.width/20, canvas.height/20);
-            lab = lab.complexLabyrinth();
-            lab.draw(20);
-            $('.myButton').click(function () {
-                lab.drawShortPath(20);
-            });  
-        </script>
 
-        <style>
-            #canvas{
-                margin: 0;
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                margin-right: -50%;
-                transform: translate(-50%, -50%);
-            }
-            body{
-                background-color:#000000;
-                text-align: center;
-            }
-            .myButton {
-                box-shadow:inset 0px 0px 0px 0px Gray;
-                background:linear-gradient(to bottom, Gray 5%, Gray 100%);
-                background-color:Gray;
-                border-radius:3px;
-                border:1px solid Gray;
-                display:inline-block;
-                cursor:pointer;
-                color:#ffffff;
-                font-family:Arial;
-                font-size:30px;
-                padding:25px 30px;
-                text-decoration:none;
-                text-shadow:0px 0px 0px Gray;
-            }
-            .myButton:active {
-                position:relative;
-                top:1px;
-            }
-        </style>
+            var lab = new labyrinth(labSize, labSize);
+
+            lab = lab.complexLabyrinth();
+            lab.draw();
+
+            $('#show').click(function () {
+                lab.drawShortPath();
+            });
+            $('#refresh').click(function () {
+                lab = lab.complexLabyrinth();
+                lab.draw();
+            });
+        </script>
     </body>
 </html>
