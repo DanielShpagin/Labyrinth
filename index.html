@@ -47,6 +47,7 @@
     </style>
 
     <body>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <script src='https://code.jquery.com/jquery-2.1.0.js'></script>
 
         <div class="whole" style="display: grid; grid-template-rows: 80pt auto;">
@@ -60,6 +61,10 @@
         </div>
 
         <script>
+            window.addEventListener("orientationchange", event => {
+                console.log("the orientation of the device is now " + event.target.screen.orientation.angle);
+            });
+
             var canvas = document.getElementById("canvas");
             var ctx = canvas.getContext("2d");
             var box = document.querySelector('#box');
