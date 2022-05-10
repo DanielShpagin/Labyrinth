@@ -61,25 +61,20 @@
         </div>
 
         <script>
-            window.addEventListener("orientationchange", event => {
-                console.log("the orientation of the device is now " + event.target.screen.orientation.angle);
-            });
-
             var canvas = document.getElementById("canvas");
             var ctx = canvas.getContext("2d");
             var box = document.querySelector('#box');
             
             var width = box.clientWidth;
             var height = box.clientHeight;
+            var labSize = 32;
 
             if (width > height) {
-                var labSize = 32;
                 var cell = Math.floor(height/labSize);
 
                 canvas.width = cell*labSize;
                 canvas.height = cell*labSize;
-            } else if (width < height) {
-                var labSize = 32;
+            } else {
                 var cell = Math.floor(width/labSize);
 
                 canvas.width = cell*labSize;
@@ -88,7 +83,17 @@
 
             class labyrinth {
                 constructor(w, h) {
-                    this.cell = Math.floor(canvas.width/32);
+                    if (width > height) {
+                        this.cell = Math.floor(height/labSize);
+
+                        canvas.width = cell*labSize;
+                        canvas.height = cell*labSize;
+                    } else {
+                        this.cell = Math.floor(width/labSize);
+
+                        canvas.width = cell*labSize;
+                        canvas.height = cell*labSize;
+                    }
 
                     this.width = w;
                     this.height = h;
@@ -369,6 +374,49 @@
                 lab.drawShortPath();
             });
             $('#refresh').click(function () {
+                lab = lab.complexLabyrinth();
+                lab.draw();
+            });
+
+            window.addEventListener("orientationchange", event => {
+                $('.whole').css({
+                    "max-width": "1000pt", 
+                    "height": "100%", 
+                    "margin": "auto"
+                });
+                $('body', 'html').css({
+                    "background-color": "black", 
+                    "height": "100%", 
+                    "margin": "auto"
+                });
+                $('#box').css({"position": "relative"});
+                $('#canvas').css({
+                    "position":"absolute", 
+                    "top":"0", 
+                    "bottom":"0", 
+                    "right": "0", 
+                    "left": "0",
+                    "margin": "auto" 
+                });
+
+                var width = box.clientWidth;
+                var height = box.clientHeight;
+                var labSize = 32;
+
+                if (width > height) {
+                    var cell = Math.floor(height/labSize);
+
+                    canvas.width = cell*labSize;
+                    canvas.height = cell*labSize;
+                } else {
+                    var cell = Math.floor(width/labSize);
+
+                    canvas.width = cell*labSize;
+                    canvas.height = cell*labSize;
+                }
+
+                var lab = new labyrinth(labSize, labSize);
+
                 lab = lab.complexLabyrinth();
                 lab.draw();
             });
