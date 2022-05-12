@@ -18,6 +18,7 @@
         }
         #box{
             position:relative;
+            background-color: red;
         }
         #canvas{
             position:absolute;
@@ -69,31 +70,9 @@
             var height = box.clientHeight;
             var labSize = 32;
 
-            if (width > height) {
-                var cell = Math.floor(height/labSize);
-
-                canvas.width = cell*labSize;
-                canvas.height = cell*labSize;
-            } else {
-                var cell = Math.floor(width/labSize);
-
-                canvas.width = cell*labSize;
-                canvas.height = cell*labSize;
-            }
-
             class labyrinth {
                 constructor(w, h) {
-                    if (width > height) {
-                        this.cell = Math.floor(height/labSize);
-
-                        canvas.width = cell*labSize;
-                        canvas.height = cell*labSize;
-                    } else {
-                        this.cell = Math.floor(width/labSize);
-
-                        canvas.width = cell*labSize;
-                        canvas.height = cell*labSize;
-                    }
+                    this.createScene();
 
                     this.width = w;
                     this.height = h;
@@ -104,6 +83,26 @@
 
                     for (var i = 0; i < this.height*this.width; i++) {
                         this.labMassive.push(0);
+                    }
+                }
+                createScene() {
+                    width = box.clientWidth;
+                    height = box.clientHeight;
+
+                    if (width > height) {
+                        this.cell = Math.floor(height/labSize);
+
+                        canvas.width = this.cell*labSize;
+                        canvas.height = this.cell*labSize;
+
+                        console.log(this.cell);
+                    } else {
+                        this.cell = Math.floor(width/labSize);
+
+                        canvas.width = this.cell*labSize;
+                        canvas.height = this.cell*labSize;
+
+                        console.log(this.cell);
                     }
                 }
                 set(x,y,v) {
@@ -360,13 +359,14 @@
                         if (best.shortPath.length < lab.shortPath.length) {
                             best = lab;
                         }
-                    }                    
+                    }
                     return best;
                 }
             }
 
             var lab = new labyrinth(labSize, labSize);
 
+            lab.createScene();
             lab = lab.complexLabyrinth();
             lab.draw();
 
@@ -378,46 +378,8 @@
                 lab.draw();
             });
 
-            window.addEventListener("orientationchange", event => {
-                $('.whole').css({
-                    "max-width": "1000pt", 
-                    "height": "100%", 
-                    "margin": "auto"
-                });
-                $('body', 'html').css({
-                    "background-color": "black", 
-                    "height": "100%", 
-                    "margin": "auto"
-                });
-                $('#box').css({"position": "relative"});
-                $('#canvas').css({
-                    "position":"absolute", 
-                    "top":"0", 
-                    "bottom":"0", 
-                    "right": "0", 
-                    "left": "0",
-                    "margin": "auto" 
-                });
-
-                var width = box.clientWidth;
-                var height = box.clientHeight;
-                var labSize = 32;
-
-                if (width > height) {
-                    var cell = Math.floor(height/labSize);
-
-                    canvas.width = cell*labSize;
-                    canvas.height = cell*labSize;
-                } else {
-                    var cell = Math.floor(width/labSize);
-
-                    canvas.width = cell*labSize;
-                    canvas.height = cell*labSize;
-                }
-
-                var lab = new labyrinth(labSize, labSize);
-
-                lab = lab.complexLabyrinth();
+            window.addEventListener("resize", event => {
+                lab.createScene();
                 lab.draw();
             });
         </script>
